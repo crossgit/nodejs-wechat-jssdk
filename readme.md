@@ -1,5 +1,5 @@
 ## 使用
-1. 根目录下添加一个 `wechat.config.js`的配置文件,内容如下,针对具体公众号更改配置
+1. 下载后,根目录下添加一个 `wechat.config.js`的配置文件,内容如下,针对具体公众号更改配置
 
         module.exports = {
             grant_type: 'client_credential',
@@ -11,10 +11,10 @@
             cache_duration: 1000 * 60 * 60 * 24
         }
 
-2. 下载后,在`package.json`同目录下执行,可能需要翻墙
+2. 在`package.json`同目录下执行,就是根目录,可能需要翻墙
 
-    npm i
-    npm start
+        npm i
+        npm start
 
 在浏览器中输入 `http://localhost:3000` 浏览器 
 
