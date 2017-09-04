@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Document</title>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var url = "http://wxjs.crossess.com/api/getCfg";
+            var weixinUrl = location.href.split('#')[0];
+            alert(weixinUrl);
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    url: weixinUrl
+                }
+            }).success(function (res) {
+                console.log(res.appId);
+                wx.config({
+                    debug: true,
+                    appId: res.appId,
+                    timestamp: res.timestamp,
+                    nonceStr: res.noncestr,
+                    signature: res.signature,
+                    jsApiList: [
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'scanQRCode',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ'
+                    ]
+                });
+                wx.ready(function () {
+                    alert("微信jssdk配置成功!");
+                    $('body').on('click', '#chooseImage', function () {
+                        wx.chooseImage({
+                            count: 8,
+                            sizeType: ['original', 'compressed'],
+                            sourceType: ['album', 'camera'],
+                            success: function (res) {
+                                console.log(res);
+                                alert('已选择 ' + res.localIds.length + ' 张图片');
+                            },
+                            fail: function (err) {
+                                alert('错误', err);
+                            }
+                        });
+                    });
+                    $('body').on('click', '#scanQRCode', function () {
+                        wx.scanQRCode({
+                            needResult: 0,
+                            scanType: ["qrCode", "barCode"],
+                            success: function (res) {
+                                var result = res.resultStr;
+                                alert(result);
+                            }
+                        });
+                    })
+                });
+                wx.error(function (err) {
+                    alert('微信JSSDK配置失败！,' + err[1]);
+                });
+
+                $('#previewImage').click(function () {
+                    console.log(11);
+                    wx.previewImage({
+                        current: 'http://pic6.huitu.com/res/20130116/84481_20130116142820494200_1.jpg',
+                        urls: [
+                            'http://pic6.huitu.com/res/20130116/84481_20130116142820494200_1.jpg',
+                            'http://img02.tooopen.com/images/20140504/sy_60294738471.jpg'
+                        ]
+                    });
+                });
+                $('body').on('click', '#shareWechat', function () {
+                    // $('#shareWechat').click(function () {
+                    alert("wechat")
+                    WeixinJSBridge.invoke('sendAppMessage', {}, function () {
+                        alert(11);
+                        wx.onMenuShareAppMessage({
+                            title: '标题', // 分享标题
+                            desc: '描述', // 分享描述
+                            link: 'http://k.crossess.com', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                            http: 'http://demo.open.weixin.qq.com/jssdk/images/p2166127561.jpg',
+                            trigger: function (res) {
+                                // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+                                alert('用户点击发送给朋友');
+                            },
+                            success: function () {
+                                // 用户确认分享后执行的回调函数
+                                alert('成功')
+                            },
+                            cancel: function () {
+                                // 用户取消分享后执行的回调函数
+                                alert('失败')
+                            }
+                        });
+                    })
+                    // document.querySelector('#onMenuShareAppMessage').onclick = function () {
+                    // wx.onMenuShareAppMessage({
+                    //     title: '标题', // 分享标题
+                    //     desc: '描述', // 分享描述
+                    //     link: 'http://k.crossess.com', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    //     http: 'http://demo.open.weixin.qq.com/jssdk/images/p2166127561.jpg',
+                    //     trigger: function (res) {
+                    //         // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+                    //         alert('用户点击发送给朋友');
+                    //     },
+                    //     success: function () {
+                    //         // 用户确认分享后执行的回调函数
+                    //         alert('成功')
+                    //     },
+                    //     cancel: function () {
+                    //         // 用户取消分享后执行的回调函数
+                    //         alert('失败')
+                    //     }
+                    // });
+                    // }
+
+                });
+            });
+
+
+
+        });
+    </script>
+</head>
+
+<body>
+    <h1>微信JSSDK网页</h1>
+    <input type="button" value="上传照片" id="chooseImage" style="height: 50px; width: 100%; background-color: #eee;">
+    <input type="button" value="预览照片" id="previewImage" style="height: 50px; width: 100%; background-color: #eee;">
+    <input type="button" value="扫一扫" id="scanQRCode" style="height: 50px; width: 100%; background-color: #eee;">
+    <input type="button" value="分享WECHAT" id="shareWechat" style="height: 50px; width: 100%; background-color: #eee;">
+    <input type="button" value="分享QQ" id="shareQQ" style="height: 50px; width: 100%; background-color: #eee;">
+    <img src="./qrcode.png" alt="">
+
+    <!-- <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a></div>
+    <script>
+        window._bd_share_config = { "common": { "bdSnsKey": { "tqq": "440f8307410cf1a2de9089a4b863536f" }, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "32" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
+    </script> -->
+    <!-- JiaThis Button BEGIN -->
+    <div class="jiathis_style_m"></div>
+    <script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_m.js" charset="utf-8"></script>
+    <!-- JiaThis Button END -->
+</body>
+
+</html>
