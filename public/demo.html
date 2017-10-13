@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var url = "http://wxjs.crossess.com/api/getCfg";
+            var weixinUrl = location.href.split('#')[0];
+            alert(weixinUrl);
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    url: weixinUrl
+                }
+            }).success(function (res) {
+                alert(JSON.stringify(res))
+                $('body').after(JSON.stringify(res));
+                wx.config({
+                    debug: true,
+                    appId: res.appId,
+                    timestamp: res.timestamp,
+                    nonceStr: res.noncestr,
+                    signature: res.signature,
+                    jsApiList: [
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ'
+                    ]
+                });
+                wx.ready(function () {
+                    alert("微信jssdk配置成功!");
+                    wx.onMenuShareAppMessage({
+                        title: '标题标题', // 分享标题
+                        desc: '描述内容', // 分享描述
+                        link: 'http://k.crossess.com', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: 'http://demo.open.weixin.qq.com/jssdk/images/p2166127561.jpg',
+                        trigger: function (res) {
+                            // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+                            alert('用户点击发送给朋友');
+                        },
+                        success: function () {
+                            // 用户确认分享后执行的回调函数
+                            alert('成功')
+                        },
+                        cancel: function () {
+                            // 用户取消分享后执行的回调函数
+                            alert('失败')
+                        }
+                    });
+                });
+                wx.error(function (err) {
+                    alert('微信JSSDK配置失败！,' + JSON.stringify(err));
+                });
+            });
+        });
+    </script>
+    <style>
+        body {
+            display: block;
+            text-align: center;
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>亮</div>
+
+</body>
+
+</html>
