@@ -32,3 +32,10 @@
 
 这样基本上就通了.还不通就留言..
     
+<table> 
+<tr><th>1</th><th>2</th><th>3</th></tr> 
+<tr><td>1</td><td>2</td><td>3</td></tr> 
+<tr><td>1</td><td>2</td><td>3</td></tr> 
+<tr><td>1</td><td>2</td><td>3</td></tr> 
+<tr><td>1</td><td>2</td><td>3</td></tr> 
+</table>
